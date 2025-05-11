@@ -82,13 +82,26 @@ def calibration_screen(user_name, screen_distance, timestamp):
 
                 # İlk noktada "Hazırsanız SPACE'e basın" mesajını göster
                 if show_message:
-                    cv2.putText(calib_screen, "Hazırsanız SPACE'e basın", (screen_width // 2 - 150, screen_height // 2),
+                    cv2.putText(calib_screen, "Hazirsaniz SPACE'e basin", (screen_width // 2 - 150, screen_height // 2),
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
                     show_message = False  # Mesajı yalnızca bir kez göster
 
                 # Şu anki nokta için çizim yapıyoruz
                 cv2.circle(calib_screen, point, 20, (255, 0, 0), -1)
                 cv2.imshow(window_name, calib_screen)
+
+                # Gözbebeklerini ekranda çizme
+                if results.multi_face_landmarks:
+                    face_landmarks = results.multi_face_landmarks[0]
+                    left_iris = face_landmarks.landmark[468]
+                    right_iris = face_landmarks.landmark[473]
+
+                    left = (int(left_iris.x * screen_width), int(left_iris.y * screen_height))
+                    right = (int(right_iris.x * screen_width), int(right_iris.y * screen_height))
+
+                    cv2.circle(calib_screen, left, 10, (0, 255, 0), -1)  # Sol gözbebeği
+                    cv2.circle(calib_screen, right, 10, (0, 255, 0), -1)  # Sağ gözbebeği
+
 
                 start_time = time.time()
                 while time.time() - start_time < 2:  # 2 saniye beklemeden veri alma
